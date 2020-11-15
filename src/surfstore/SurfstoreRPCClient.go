@@ -13,7 +13,7 @@ type RPCClient struct {
 
 func (surfClient *RPCClient) GetBlock(blockHash string, block *Block) error {
 	// connect to the server
-	conn, e := rpc.DialHTTP("tcp", "localhost:"+surfClient.ServerAddr)
+	conn, e := rpc.DialHTTP("tcp", surfClient.ServerAddr)
 	if e != nil {
 		return e
 	}
@@ -31,7 +31,7 @@ func (surfClient *RPCClient) GetBlock(blockHash string, block *Block) error {
 
 func (surfClient *RPCClient) PutBlock(block Block, succ *bool) error {
 	// connect to the server
-	conn, e := rpc.DialHTTP("tcp", "localhost:"+surfClient.ServerAddr)
+	conn, e := rpc.DialHTTP("tcp", surfClient.ServerAddr)
 	if e != nil {
 		return e
 	}
@@ -48,7 +48,7 @@ func (surfClient *RPCClient) PutBlock(block Block, succ *bool) error {
 
 func (surfClient *RPCClient) HasBlocks(blockHashesIn []string, blockHashesOut *[]string) error {
 	// connect to the server
-	conn, e := rpc.DialHTTP("tcp", "localhost:"+surfClient.ServerAddr)
+	conn, e := rpc.DialHTTP("tcp", surfClient.ServerAddr)
 	if e != nil {
 		return e
 	}
@@ -65,7 +65,7 @@ func (surfClient *RPCClient) HasBlocks(blockHashesIn []string, blockHashesOut *[
 }
 // Asking client for remote index
 func (surfClient *RPCClient) GetFileInfoMap(succ *bool, serverFileInfoMap *map[string]FileMetaData) error {
-	conn, e := rpc.DialHTTP("tcp", "localhost:"+surfClient.ServerAddr)
+	conn, e := rpc.DialHTTP("tcp", surfClient.ServerAddr)
 	if e != nil {
 		return e
 	}
@@ -81,7 +81,7 @@ func (surfClient *RPCClient) GetFileInfoMap(succ *bool, serverFileInfoMap *map[s
 }
 
 func (surfClient *RPCClient) UpdateFile(fileMetaData *FileMetaData, latestVersion *int) error {
-	conn, e := rpc.DialHTTP("tcp", "localhost:"+surfClient.ServerAddr)
+	conn, e := rpc.DialHTTP("tcp", surfClient.ServerAddr)
 	if e != nil {
 		return e
 	}

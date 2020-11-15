@@ -127,6 +127,8 @@ func ServeSurfstoreServer(hostAddr string, surfstoreServer Server) error {
 		err = http.Serve(l,nil)
 	}()
 	log.Print("Press enter key to end server")
-	fmt.Scanln()
+	for {
+		fmt.Scanln()
+	}
 	return err
 }

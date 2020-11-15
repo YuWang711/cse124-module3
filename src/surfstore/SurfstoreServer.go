@@ -5,7 +5,7 @@ import (
 	"net"
 	"net/http"
 	"net/rpc"
-	"fmt"
+	//"fmt"
 	"sync"
 )
 
@@ -127,8 +127,6 @@ func ServeSurfstoreServer(hostAddr string, surfstoreServer Server) error {
 		err = http.Serve(l,nil)
 	}()
 	log.Print("Press enter key to end server")
-	for {
-		fmt.Scanln()
-	}
+	//fmt.Scanln()
 	return err
 }

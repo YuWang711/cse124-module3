@@ -68,7 +68,7 @@ func ClientSync(client RPCClient) {
 	Local_Mod_FileMetaMap,Local_new_FileMetaMap,Local_No_Mod_FileMetaMap := CheckForNewChangedFile(client,files, temp_FileMetaMap)
 	for index,element := range Local_new_FileMetaMap {
 		//Case 1 : new file was created locally that WAS NOT on the server
-		log.Print("New File")
+	//	log.Print("New File")
 		if _, ok := remote_FileMetaMap[index]; !ok {
 			handleNewFile(client,element)
 		} else {
@@ -84,13 +84,13 @@ func ClientSync(client RPCClient) {
 		}
 	}
 	for index,element := range Local_No_Mod_FileMetaMap {
-		log.Print("No Mod")
+	//	log.Print("No Mod")
 		//Case 1 : if local no modification file WAS NOT on the server
 		if _, ok := remote_FileMetaMap[index]; !ok {
 			handleNewFile(client,element)
 		} else {
 		//Case 2: if Local Modification file WAS on the server
-			log.Print("CLIENT - REMOTE VERSION : ", remote_FileMetaMap[index].Version)
+	//		log.Print("CLIENT - REMOTE VERSION : ", remote_FileMetaMap[index].Version)
 			if Local_No_Mod_FileMetaMap[index].Version < remote_FileMetaMap[index].Version {
 				//Update it to remote version
 				UpdateLocal(client, remote_FileMetaMap[index])
@@ -98,17 +98,17 @@ func ClientSync(client RPCClient) {
 		}
 	}
 	for index,element := range Local_Mod_FileMetaMap {
-		log.Print("Mod")
+	//	log.Print("Mod")
 		//Case 1 : if local modified file WAS NOT on the server
 		if _, ok := remote_FileMetaMap[index]; !ok {
-			log.Print("NOT IN SERVER")
+	//		log.Print("NOT IN SERVER")
 			handleNewFile(client,element)
 		} else {
 		//Case 2: if Local Modified file WAS on the server
-			log.Print("IN SERVER")
+	//		log.Print("IN SERVER")
 			if Local_Mod_FileMetaMap[index].Version < remote_FileMetaMap[index].Version {
 				//Update it to remote version
-				log.Print("SERVER VERSION IS HIGHER")
+	//			log.Print("SERVER VERSION IS HIGHER")
 				//Lost the race
 				UpdateLocal(client, remote_FileMetaMap[index])
 			} else if Local_Mod_FileMetaMap[index].Version == remote_FileMetaMap[index].Version {
@@ -116,13 +116,13 @@ func ClientSync(client RPCClient) {
 				//Check if file is the same.
 				//Don't touch if it is
 				//Update Remote File, version += 1
-				log.Print("VERSION ARE EQUAL")
+	//			log.Print("VERSION ARE EQUAL")
 				UpdateRemote(client, Local_Mod_FileMetaMap[index])
 			}
 		}
 	}
 	client.GetFileInfoMap(&success, &remote_FileMetaMap)
-	PrintMetaMap(remote_FileMetaMap)
+	//PrintMetaMap(remote_FileMetaMap)
 	UpdateIndex(client,remote_FileMetaMap)
 	//Check for deleted files
 }
@@ -169,7 +169,7 @@ func CheckForNewChangedFile(client RPCClient, files []os.FileInfo,temp_FileMetaM
 					new_FileMetaData.BlockHashList = append(new_FileMetaData.BlockHashList, element)
 				}
 				Changed[f.Name()] = new_FileMetaData
-				log.Println("Changes Detected in ", f.Name())
+//				log.Println("Changes Detected in ", f.Name())
 			} else {
 				var new_FileMetaData FileMetaData
 				new_FileMetaData.Filename = f.Name()
@@ -178,13 +178,13 @@ func CheckForNewChangedFile(client RPCClient, files []os.FileInfo,temp_FileMetaM
 					new_FileMetaData.BlockHashList = append(new_FileMetaData.BlockHashList, element)
 				}
 				NoMod[f.Name()] = new_FileMetaData
-				log.Println("No Changes Detected in ", f.Name())
+//				log.Println("No Changes Detected in ", f.Name())
 			}
 		} else {
 			//If file is not found in index.txt
 			//Situation 1/2
 			//Still wrong need update
-			log.Print("Case 1/2")
+//			log.Print("Case 1/2")
 			index_file, err := os.OpenFile(client.BaseDir + "/index.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY,0644)
 			if err != nil {
 				log.Print(err)
@@ -204,7 +204,7 @@ func CheckForNewChangedFile(client RPCClient, files []os.FileInfo,temp_FileMetaM
 			}
 			version := strconv.Itoa(new_FileMetaData.Version)
 			New[f.Name()] = new_FileMetaData
-			log.Print("updating file with :" ,hash_list_string)
+//			log.Print("updating file with :" ,hash_list_string)
 			_,err = index_file.WriteString(new_FileMetaData.Filename + "," + version + "," + hash_list_string + "\n")
 
 			if err != nil {
@@ -220,7 +220,7 @@ func CheckForNewChangedFile(client RPCClient, files []os.FileInfo,temp_FileMetaM
 func handleBlocks(nblocks int64, open_file *os.File, client RPCClient, local FileMetaData) (int, []string){
 	Code := 0
 	hash_list_string := make([]string, int(nblocks))
-	log.Print("this file has ", nblocks , " number of blocks")
+//	log.Print("this file has ", nblocks , " number of blocks")
 	for i := 0; int64(i) < nblocks; i++ {
 		var new_block Block
 		new_block.BlockData = make([]byte,client.BlockSize)
@@ -229,14 +229,14 @@ func handleBlocks(nblocks int64, open_file *os.File, client RPCClient, local Fil
 		h := sha256.New()
 		h.Write(new_block.BlockData)
 		h_val := h.Sum(nil)
-		log.Print("Actual Text hash ", h_val)
+//		log.Print("Actual Text hash ", h_val)
 		var h_val_s string
 		for _,element := range h_val{
 			h_val_s += string(element)
 		}
 		if len(local.BlockHashList) >= (i+1) {
-			log.Print("HANDLE BLOCKS- blockhashlist ", local.BlockHashList[i])
-			log.Print("HANDLE BLOCKS- H_VAL_S ", h_val_s)
+//			log.Print("HANDLE BLOCKS- blockhashlist ", local.BlockHashList[i])
+//			log.Print("HANDLE BLOCKS- H_VAL_S ", h_val_s)
 			if h_val_s != local.BlockHashList[i] {
 				Code = 1
 			}
@@ -254,7 +254,7 @@ func handleIndex(file_info string) (FileMetaData){
 	s_1,_ := strconv.ParseInt(s[1], 10, 0)
 	new_FileMetaData.Version = int(s_1)
 	//Need fixed
-	log.Print("HANDLE INDEX - PRINTING HASH LIST")
+//	log.Print("HANDLE INDEX - PRINTING HASH LIST")
 	s_2 := strings.Split(s[2], " ")
 	var hash_string string
 	for i:= 1; i <= len(s_2);i++ {
@@ -275,7 +275,7 @@ func handleIndex(file_info string) (FileMetaData){
 func handleNewFile(client RPCClient, new_file FileMetaData) {
 	var file_size int64
 	f,err := os.Stat(client.BaseDir+ "/" + new_file.Filename)
-	log.Print("name :", new_file.Filename)
+//	log.Print("name :", new_file.Filename)
 	file_size = f.Size()
 	nblocks := (file_size / int64(client.BlockSize)) + 1
 	open_file, err := os.Open(client.BaseDir + "/" + f.Name())
@@ -293,13 +293,13 @@ func handleNewFile(client RPCClient, new_file FileMetaData) {
 			log.Print(err)
 		}
 	}
-	log.Print("CLIENT-UTIL VERSION:" ,new_file.Version)
+//	log.Print("CLIENT-UTIL VERSION:" ,new_file.Version)
 	err = client.UpdateFile(&new_file, &new_file.Version)
-	log.Print("CLIENT-UTIL VERSION:" ,new_file.Version)
+//	log.Print("CLIENT-UTIL VERSION:" ,new_file.Version)
 	if err != nil {
 		log.Print(err)
 	}
-	log.Print("CLIENT-UTIL CALLED UPDATE FILE - HANDLE NEW FILE")
+//	log.Print("CLIENT-UTIL CALLED UPDATE FILE - HANDLE NEW FILE")
 	open_file.Close()
 }
 

@@ -36,7 +36,7 @@ func ClientSync(client RPCClient) {
 		var l []byte
 		for {
 			l,isPrefix,err = reader.ReadLine()
-			log.Printf(string(l))
+		//	log.Printf(string(l))
 			line = line + string(l)
 			if !isPrefix {
 				break
@@ -46,6 +46,7 @@ func ClientSync(client RPCClient) {
 			}
 		}
 		if line != "" {
+			log.Print(line)
 			var new_File_Meta_Data FileMetaData
 			new_File_Meta_Data = handleIndex(string(line))
 			temp_FileMetaMap[new_File_Meta_Data.Filename] = new_File_Meta_Data

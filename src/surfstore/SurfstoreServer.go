@@ -126,6 +126,7 @@ func ServeSurfstoreServer(hostAddr string, surfstoreServer Server) error {
 		err := http.Serve(l,nil)
 		if err != nil {
 			log.Print(err)
+			return err
 		}
 	}
 	log.Print("Press enter key to end server")

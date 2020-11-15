@@ -2,7 +2,7 @@ package surfstore
 
 import(
 	"crypto/sha256"
-	"log"
+//	"log"
 )
 
 type BlockStore struct {
@@ -12,7 +12,7 @@ type BlockStore struct {
 //Get blocks 
 func (bs *BlockStore) GetBlock(blockHash string, blockData *Block) error {
 	*blockData = bs.BlockMap[blockHash]
-	log.Print("Block Stored ", string(bs.BlockMap[blockHash].BlockData))
+//	log.Print("Block Stored ", string(bs.BlockMap[blockHash].BlockData))
 	return nil
 }
 
@@ -22,10 +22,10 @@ func (bs *BlockStore) PutBlock(block Block, succ *bool) error {
 	defer func(){
 		if r:= recover(); r != nil{
 			*succ = false
-			log.Print("PUTBLOCK - BLOCKSTORE success: ", *succ)
+//			log.Print("PUTBLOCK - BLOCKSTORE success: ", *succ)
 		} else {
 			*succ = true
-			log.Print("PUTBLOCK - BLOCKSTORE success: ", *succ)
+//			log.Print("PUTBLOCK - BLOCKSTORE success: ", *succ)
 		}
 	}()
 	h := sha256.New()

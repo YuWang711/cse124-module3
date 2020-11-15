@@ -42,9 +42,9 @@ func (s *Server) UpdateFile(fileMetaData *FileMetaData, latestVersion *int) erro
 			log.Print("UPDATEFILE - SERVER")
 		}
 	}()
-	log.Print("UPDATEFILE - SERVER")
-	log.Print("Filename : ", fileMetaData.Filename)
-	log.Print("Version : ", *latestVersion)
+//	log.Print("UPDATEFILE - SERVER")
+//	log.Print("Filename : ", fileMetaData.Filename)
+//	log.Print("Version : ", *latestVersion)
 	s.MetaStore.UpdateFile(fileMetaData,latestVersion)
 	return nil
 }
@@ -77,8 +77,8 @@ func (s *Server) PutBlock(blockData Block, succ *bool) error {
 			log.Print("PUTBLOCK - SERVER success:", *succ)
 		}
 	}()
-	log.Print("BlockByte : " ,blockData.BlockData)
-	log.Print("BlockSize: " ,blockData.BlockSize)
+//	log.Print("BlockByte : " ,blockData.BlockData)
+//	log.Print("BlockSize: " ,blockData.BlockSize)
 	err := s.BlockStore.PutBlock(blockData, succ)
 	if err != nil {
 		log.Print(err)

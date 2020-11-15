@@ -2,7 +2,7 @@ package surfstore
 
 import (
 	"net/rpc"
-	"log"
+//	"log"
 )
 
 type RPCClient struct {
@@ -36,7 +36,7 @@ func (surfClient *RPCClient) PutBlock(block Block, succ *bool) error {
 		return e
 	}
 	e = conn.Call("Surfstore.PutBlock", block, succ)
-	log.Print("PUTBLOCK - RPCClient success:", *succ)
+//	log.Print("PUTBLOCK - RPCClient success:", *succ)
 	if e != nil {
 		conn.Close()
 		return e

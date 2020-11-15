@@ -1,7 +1,7 @@
 package surfstore
 
 import (
-	"log"
+//	"log"
 )
 type MetaStore struct {
 	FileMetaMap map[string]FileMetaData
@@ -10,11 +10,11 @@ type MetaStore struct {
 type MyError struct{}
 
 func (m *MetaStore) GetFileInfoMap(_ignore *bool, serverFileInfoMap *map[string]FileMetaData) error {
-	log.Print("In MetaStore")
-	for _,element := range m.FileMetaMap {
-		log.Print("Filename: ",element.Filename)
-		log.Print("File Version: ",element.Version)
-	}
+	//log.Print("In MetaStore")
+	//for _,element := range m.FileMetaMap {
+	//	log.Print("Filename: ",element.Filename)
+	//	log.Print("File Version: ",element.Version)
+	//}
 	*serverFileInfoMap = m.FileMetaMap
 	return nil
 }
@@ -26,13 +26,13 @@ func (m *MetaStore) UpdateFile(fileMetaData *FileMetaData, latestVersion *int) (
 		if (m.FileMetaMap[filename].Version+1) == fileMetaData.Version {
 			m.FileMetaMap[filename] = *fileMetaData
 			*latestVersion = m.FileMetaMap[filename].Version
-			log.Print("METASTORE - UPDATEFILE: ", filename)
+	//		log.Print("METASTORE - UPDATEFILE: ", filename)
 			return nil
 		} else {
 			return &MyError{}
 		}
 	} else {
-		log.Print("METASTORE - UPDATEFILE: ", filename)
+	//	log.Print("METASTORE - UPDATEFILE: ", filename)
 		m.FileMetaMap[filename] = *fileMetaData
 		*latestVersion = m.FileMetaMap[filename].Version
 		return nil

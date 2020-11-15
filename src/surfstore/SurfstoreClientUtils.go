@@ -261,13 +261,13 @@ func handleIndex(file_info string) (FileMetaData){
 		int_form,_ := strconv.Atoi(s_2[i-1])
 		byte_form := byte(int_form)
 		hash_string += string(byte_form) 
-		log.Print(hash_string)
+		//log.Print(hash_string)
 		if(i%32) == 0{
 			new_FileMetaData.BlockHashList = append(new_FileMetaData.BlockHashList, hash_string)
 			hash_string = ""
 		}
 	}
-	log.Print(new_FileMetaData.Filename)
+	//log.Print(new_FileMetaData.Filename)
 	return new_FileMetaData
 }
 

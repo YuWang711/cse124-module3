@@ -121,11 +121,5 @@ func ServeSurfstoreServer(hostAddr string, surfstoreServer Server) error {
 	if e != nil {
 		log.Print("listen error:", e)
 	}
-	for {
-		err := http.Serve(l,nil)
-		if err != nil {
-			log.Print(err)
-		}
-	}
-	return nil
+	return http.Serve(l,nil)
 }

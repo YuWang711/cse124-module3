@@ -59,7 +59,7 @@ func ClientSync(client RPCClient) {
 	remote_FileMetaMap := make(map[string]FileMetaData)
 	var success bool
 	client.GetFileInfoMap(&success, &remote_FileMetaMap)
-	PrintMetaMap(remote_FileMetaMap)
+	//PrintMetaMap(remote_FileMetaMap)
 	//Sorting Local Index
 	//Client, files, 
 	//Handle Deleted Files
@@ -304,7 +304,7 @@ func handleNewFile(client RPCClient, new_file FileMetaData) {
 }
 
 func UpdateIndex(client RPCClient, remote_file map[string]FileMetaData){
-	log.Print("Updating File Index.txt")
+	//log.Print("Updating File Index.txt")
 	err := os.Truncate(client.BaseDir+"/index.txt", 0)
 	update_file, err := os.OpenFile(client.BaseDir + "/index.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY,0644)
 	if err != nil {
@@ -328,18 +328,18 @@ func UpdateIndex(client RPCClient, remote_file map[string]FileMetaData){
 }
 
 func UpdateLocal(client RPCClient, remote_file FileMetaData){
-	log.Print("UPDATE LOCAL")
+	//log.Print("UPDATE LOCAL")
 	err := os.Truncate(client.BaseDir+"/"+remote_file.Filename, 0)
 	update_file, err := os.OpenFile(client.BaseDir + "/"+remote_file.Filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY,0644)
 	if err != nil {
 		log.Print("Update file: ", err)
 	}
 	for _, element := range remote_file.BlockHashList{
-		log.Print("block hash list :" ,element)
+	//	log.Print("block hash list :" ,element)
 		var block Block
 		client.GetBlock(element, &block)
-		log.Print("Retrieved Block :", string(block.BlockData))
-		log.Print("Block Size ", block.BlockSize)
+//		log.Print("Retrieved Block :", string(block.BlockData))
+//		log.Print("Block Size ", block.BlockSize)
 		next_string := make([]byte,block.BlockSize)
 		for i:=0; i < block.BlockSize;i++ {
 			next_string[i] = block.BlockData[i]
@@ -388,7 +388,7 @@ func UpdateRemote(client RPCClient, local_file FileMetaData) {
 func Handle_Deleted_File(client RPCClient, temp_FileMetaMap map[string]FileMetaData, files []os.FileInfo) {
 	err := os.Truncate(client.BaseDir+"/index.txt", 0)
 	index_file, err := os.OpenFile(client.BaseDir + "/index.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY,0644)
-	log.Print("Deleting File")
+//	log.Print("Deleting File")
 	found := 0
 	if err != nil {
 		log.Print(err)

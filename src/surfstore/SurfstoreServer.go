@@ -5,7 +5,7 @@ import (
 	"net"
 	"net/http"
 	"net/rpc"
-	//"fmt"
+	"fmt"
 	"sync"
 )
 
@@ -114,19 +114,21 @@ func NewSurfstoreServer() Server {
 }
 
 func ServeSurfstoreServer(hostAddr string, surfstoreServer Server) error {
+
 	rpc.RegisterName("Surfstore",&surfstoreServer)
 	rpc.HandleHTTP()
 	log.Print("Starting server at Host Address: ", hostAddr)
 	l, e := net.Listen("tcp", hostAddr)
 	if e != nil {
 		log.Print("listen error:", e)
-		return e
 	}
-	var err error
-	go func() {
-		err = http.Serve(l,nil)
-	}()
+	for {
+		err := http.Serve(l,nil)
+		if err != nil {
+			log.Print(err)
+		}
+	}
 	log.Print("Press enter key to end server")
-	//fmt.Scanln()
-	return err
+	fmt.Scanln()
+	return nil
 }

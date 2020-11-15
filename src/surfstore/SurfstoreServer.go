@@ -21,10 +21,10 @@ func (s *Server) GetFileInfoMap(succ *bool, serverFileInfoMap *map[string]FileMe
 		s.Mutex.Unlock()
 		if r := recover(); r != nil{
 			*succ = false
-			log.Print("GETFILEINFOMAP - SERVER success :", *succ)
+	//		log.Print("GETFILEINFOMAP - SERVER success :", *succ)
 		} else {
 			*succ = true
-			log.Print("GETFILEINFOMAP - SERVER success :", *succ)
+	//		log.Print("GETFILEINFOMAP - SERVER success :", *succ)
 		}
 	}()
 	s.MetaStore.GetFileInfoMap(succ, serverFileInfoMap)
@@ -37,9 +37,9 @@ func (s *Server) UpdateFile(fileMetaData *FileMetaData, latestVersion *int) erro
 	defer func(){
 		s.Mutex.Unlock()
 		if r := recover(); r != nil{
-			log.Print("UPDATEFILE - SERVER")
+	//		log.Print("UPDATEFILE - SERVER")
 		} else {
-			log.Print("UPDATEFILE - SERVER")
+	//		log.Print("UPDATEFILE - SERVER")
 		}
 	}()
 //	log.Print("UPDATEFILE - SERVER")
@@ -71,10 +71,10 @@ func (s *Server) PutBlock(blockData Block, succ *bool) error {
 		s.Mutex.Unlock()
 		if r := recover(); r != nil{
 			*succ = false
-			log.Print("PUTBLOCK - SERVER success:", *succ)
+	//		log.Print("PUTBLOCK - SERVER success:", *succ)
 		} else {
 			*succ = true
-			log.Print("PUTBLOCK - SERVER success:", *succ)
+	//		log.Print("PUTBLOCK - SERVER success:", *succ)
 		}
 	}()
 //	log.Print("BlockByte : " ,blockData.BlockData)

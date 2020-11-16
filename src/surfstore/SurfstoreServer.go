@@ -5,13 +5,13 @@ import (
 //	"net"
 	"net/http"
 	"net/rpc"
-	"sync"
+//	"sync"
 )
 
 type Server struct {
 	BlockStore BlockStoreInterface
 	MetaStore  MetaStoreInterface
-	Mutex      *sync.Mutex
+//	Mutex      *sync.Mutex
 }
 
 func (s *Server) GetFileInfoMap(succ *bool, serverFileInfoMap *map[string]FileMetaData) error {
@@ -94,11 +94,11 @@ var _ Surfstore = new(Server)
 func NewSurfstoreServer() Server {
 	blockStore := BlockStore{BlockMap: map[string]Block{}}
 	metaStore := MetaStore{FileMetaMap: map[string]FileMetaData{}}
-	mutex := &sync.Mutex{}
+//	mutex := &sync.Mutex{}
 	return Server{
 		BlockStore: &blockStore,
 		MetaStore:  &metaStore,
-		Mutex: mutex,
+//		Mutex: mutex,
 	}
 }
 

@@ -106,12 +106,11 @@ func ServeSurfstoreServer(hostAddr string, surfstoreServer Server) error {
 
 	rpc.RegisterName("Surfstore",&surfstoreServer)
 	rpc.HandleHTTP()
-	/*log.Print("Starting server at Host Address: ", hostAddr)
-	l, e := net.Listen("tcp", hostAddr)
-	if e != nil {
-		log.Print("listen error:", e)
-	}*/
-
+	log.Print("Starting server at Host Address: ", hostAddr)
+//	_, e := net.Listen("tcp", hostAddr)
+//	if e != nil {
+//		log.Print("listen error:", e)
+//	}
 	return http.ListenAndServe(hostAddr,nil)
 
 }

@@ -25,6 +25,7 @@ func ClientSync(client RPCClient) {
 		f.Close()
 	}
 
+	return
 	//Getting Local Index
 	index_file, err := os.Open(client.BaseDir + "/index.txt")
 	reader := bufio.NewReader(index_file)

@@ -112,6 +112,6 @@ func ServeSurfstoreServer(hostAddr string, surfstoreServer Server) error {
 		log.Print("listen error:", e)
 	}*/
 
-	http.ListenAndServe(hostAddr,nil)
-	return nil
+	return http.ListenAndServe(hostAddr,nil)
+
 }

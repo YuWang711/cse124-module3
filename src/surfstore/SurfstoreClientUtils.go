@@ -122,7 +122,17 @@ func ClientSync(client RPCClient) {
 			}
 		}
 	}
+	// Need to handle file that's in remote, but not in local.
+	// Above accounts for all the updates, no changes and new file
 	client.GetFileInfoMap(&success, &remote_FileMetaMap)
+
+	for _,element := range remote_FileMetaMap {
+		if _, err := os.Stat(client.BaseDir+"/"+element.Filename); os.IsNotExist(err) {
+			if element.BlockHashList[0] != "0"{
+				UpdateLocal(client, element)
+			}
+		}
+	}
 	PrintMetaMap(remote_FileMetaMap)
 	UpdateIndex(client,remote_FileMetaMap)
 	//Check for deleted files

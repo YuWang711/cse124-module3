@@ -11,11 +11,13 @@ import (
 type Server struct {
 	BlockStore BlockStoreInterface
 	MetaStore  MetaStoreInterface
-//	Mutex      *sync.Mutex
+	//Mutex      *sync.Mutex
 }
 
 func (s *Server) GetFileInfoMap(succ *bool, serverFileInfoMap *map[string]FileMetaData) error {
+//	s.Mutex.Lock()
 	defer func(){
+//		s.Mutex.Unlock()
 		if r := recover(); r != nil{
 			*succ = false
 	//		log.Print("GETFILEINFOMAP - SERVER success :", *succ)
@@ -30,7 +32,9 @@ func (s *Server) GetFileInfoMap(succ *bool, serverFileInfoMap *map[string]FileMe
 }
 
 func (s *Server) UpdateFile(fileMetaData *FileMetaData, latestVersion *int) error {
+//	s.Mutex.Lock()
 	defer func(){
+//		s.Mutex.Unlock()
 		if r := recover(); r != nil{
 	//		log.Print("UPDATEFILE - SERVER")
 		} else {
@@ -45,7 +49,9 @@ func (s *Server) UpdateFile(fileMetaData *FileMetaData, latestVersion *int) erro
 }
 
 func (s *Server) GetBlock(blockHash string, blockData *Block) error {
+//	s.Mutex.Lock()
 	defer func(){
+//		s.Mutex.Unlock()
 		if r := recover(); r != nil{
 			log.Print("Recovered in GetBlock()")
 		} else {
@@ -59,7 +65,9 @@ func (s *Server) GetBlock(blockHash string, blockData *Block) error {
 }
 
 func (s *Server) PutBlock(blockData Block, succ *bool) error {
+//	s.Mutex.Lock()
 	defer func(){
+//		s.Mutex.Unlock()
 		if r := recover(); r != nil{
 			*succ = false
 	//		log.Print("PUTBLOCK - SERVER success:", *succ)
@@ -79,7 +87,9 @@ func (s *Server) PutBlock(blockData Block, succ *bool) error {
 }
 
 func (s *Server) HasBlocks(blockHashesIn []string, blockHashesOut *[]string) error {
+//	s.Mutex.Lock()
 	defer func(){
+//		s.Mutex.Unlock()
 		if r := recover(); r != nil{
 			log.Print("Recovered in HasBlocks()")
 		} else {

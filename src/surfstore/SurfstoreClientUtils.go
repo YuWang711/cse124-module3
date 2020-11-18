@@ -60,7 +60,7 @@ func ClientSync(client RPCClient) {
 	remote_FileMetaMap := make(map[string]FileMetaData)
 	var success bool
 	client.GetFileInfoMap(&success, &remote_FileMetaMap)
-	//PrintMetaMap(remote_FileMetaMap)
+	PrintMetaMap(remote_FileMetaMap)
 	//Sorting Local Index
 	//Client, files, 
 	//Handle Deleted Files
@@ -123,9 +123,10 @@ func ClientSync(client RPCClient) {
 		}
 	}
 	client.GetFileInfoMap(&success, &remote_FileMetaMap)
-	//PrintMetaMap(remote_FileMetaMap)
+	PrintMetaMap(remote_FileMetaMap)
 	UpdateIndex(client,remote_FileMetaMap)
 	//Check for deleted files
+	return
 }
 
 /*
@@ -136,7 +137,8 @@ func PrintMetaMap(metaMap map[string]FileMetaData) {
 	fmt.Println("--------BEGIN PRINT MAP--------")
 
 	for _, filemeta := range metaMap {
-		fmt.Println("\t", filemeta.Filename, filemeta.Version, filemeta.BlockHashList)
+//		fmt.Println("\t", filemeta.Filename, filemeta.Version, filemeta.BlockHashList)
+		fmt.Println("\t", filemeta.Filename, filemeta.Version)
 	}
 
 	fmt.Println("---------END PRINT MAP--------")
@@ -247,7 +249,7 @@ func handleBlocks(nblocks int64, open_file *os.File, client RPCClient, local Fil
 	return Code, hash_list_string
 }
 
-
+//Read Index.txt initially
 func handleIndex(file_info string) (FileMetaData){
 	s := strings.Split(file_info, ",")
 	var new_FileMetaData FileMetaData
@@ -256,16 +258,18 @@ func handleIndex(file_info string) (FileMetaData){
 	new_FileMetaData.Version = int(s_1)
 	//Need fixed
 //	log.Print("HANDLE INDEX - PRINTING HASH LIST")
-	s_2 := strings.Split(s[2], " ")
-	var hash_string string
-	for i:= 1; i <= len(s_2);i++ {
-		int_form,_ := strconv.Atoi(s_2[i-1])
-		byte_form := byte(int_form)
-		hash_string += string(byte_form) 
-		//log.Print(hash_string)
-		if(i%32) == 0{
-			new_FileMetaData.BlockHashList = append(new_FileMetaData.BlockHashList, hash_string)
-			hash_string = ""
+	if s[2] != "0" {
+		s_2 := strings.Split(s[2], " ")
+		var hash_string string
+		for i:= 1; i <= len(s_2);i++ {
+			int_form,_ := strconv.Atoi(s_2[i-1])
+			byte_form := byte(int_form)
+			hash_string += string(byte_form) 
+			//log.Print(hash_string)
+			if(i%32) == 0{
+				new_FileMetaData.BlockHashList = append(new_FileMetaData.BlockHashList, hash_string)
+				hash_string = ""
+			}
 		}
 	}
 	//log.Print(new_FileMetaData.Filename)
@@ -337,17 +341,24 @@ func UpdateLocal(client RPCClient, remote_file FileMetaData){
 	}
 	for _, element := range remote_file.BlockHashList{
 	//	log.Print("block hash list :" ,element)
-		var block Block
-		client.GetBlock(element, &block)
-//		log.Print("Retrieved Block :", string(block.BlockData))
-//		log.Print("Block Size ", block.BlockSize)
-		next_string := make([]byte,block.BlockSize)
-		for i:=0; i < block.BlockSize;i++ {
-			next_string[i] = block.BlockData[i]
-		}
-		_, err := update_file.WriteString(string(next_string))
-		if err != nil {
-			log.Print(err)
+		if element == "0" {
+			err := os.Remove(remote_file.Filename)
+			if err != nil{
+				log.Print(err)
+			}
+		} else {
+			var block Block
+			client.GetBlock(element, &block)
+//			log.Print("Retrieved Block :", string(block.BlockData))
+//			log.Print("Block Size ", block.BlockSize)
+			next_string := make([]byte,block.BlockSize)
+			for i:=0; i < block.BlockSize;i++ {
+				next_string[i] = block.BlockData[i]
+			}
+			_, err := update_file.WriteString(string(next_string))
+			if err != nil {
+				log.Print(err)
+			}
 		}
 	}
 	update_file.Close()
@@ -390,34 +401,41 @@ func Handle_Deleted_File(client RPCClient, temp_FileMetaMap map[string]FileMetaD
 	err := os.Truncate(client.BaseDir+"/index.txt", 0)
 	index_file, err := os.OpenFile(client.BaseDir + "/index.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY,0644)
 //	log.Print("Deleting File")
-	found := 0
 	if err != nil {
 		log.Print(err)
 	}
 	for _,element := range temp_FileMetaMap {
-		for _,file := range files {
-			if element.Filename == file.Name() {
-				found = 1
-				var hash_list_string string
-				for _,hash_string := range temp_FileMetaMap[element.Filename].BlockHashList {
-					hash_byte := []byte(hash_string)
-					for _,element := range hash_byte {
-						hash_list_string += strconv.Itoa(int(element)) + " "
-					}
+		log.Print(element.Filename)
+		if _, err := os.Stat(client.BaseDir+"/"+element.Filename); err == nil {
+			log.Print(element.Filename+ " Found")
+			var hash_list_string string
+			for _,hash_string := range temp_FileMetaMap[element.Filename].BlockHashList {							hash_byte := []byte(hash_string)
+				for _,element := range hash_byte {
+					hash_list_string += strconv.Itoa(int(element)) + " "
 				}
-				version := strconv.Itoa(element.Version)
-				_,err := index_file.WriteString(element.Filename + "," + version + "," + hash_list_string)
-				if err != nil {
-					log.Print(err)
-				}
-				break
+			}
+			version := strconv.Itoa(element.Version)
+			_,err := index_file.WriteString(element.Filename + "," + version + "," + hash_list_string)
+			if err != nil {
+				log.Print(err)
+			}
+		} else if os.IsNotExist(err) {
+			log.Print(element.Filename+ " Not Found")
+			var delete_version int
+			var temp_FileMetaData FileMetaData
+			temp_FileMetaData = element
+			temp_FileMetaData.BlockHashList = []string{"0"}
+			temp_FileMetaData.Version += 1
+			log.Print(temp_FileMetaData.Version)
+			err := client.UpdateFile(&temp_FileMetaData,&delete_version)
+			log.Print(delete_version)
+			if err != nil{
+				UpdateLocal(client, element)
+			} else {
+				version := strconv.Itoa(delete_version)
+				index_file.WriteString(element.Filename + "," + version + ",0")
 			}
 		}
-		if found == 0 {
-			version := strconv.Itoa(element.Version)
-			index_file.WriteString(element.Filename + "," + version + ",0")
-		}
-		found = 0
 	}
 	index_file.Close()
 }

@@ -128,11 +128,7 @@ func ClientSync(client RPCClient) {
 	client.GetFileInfoMap(&success, &remote_FileMetaMap)
 
 	for _,element := range remote_FileMetaMap {
-		if _, err := os.Stat(client.BaseDir+"/"+element.Filename); os.IsNotExist(err) {
-			if element.BlockHashList[0] != "30"{
-				UpdateLocal(client, element)
-			}
-		}
+		UpdateLocal(client, element)
 	}
 	PrintMetaMap(remote_FileMetaMap)
 	UpdateIndex(client,remote_FileMetaMap)
